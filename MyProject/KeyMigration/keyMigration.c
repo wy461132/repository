@@ -22,5 +22,4 @@ int main(void)
     result=Tspi_Policy_SetSecret(hTPM_Policy,TSS_SECRET_MODE_PLAIN,3,"123");
     DBG("Set TPM policy's secret to 123",result);
 
-
 }
