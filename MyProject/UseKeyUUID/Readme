@@ -1,2 +1,3 @@
 在为密钥分配TSS_UUID时，如SRK的TSS_UUID,应该这样：TSS_UUID SRK_UUID=TSS_UUID_SRK;在需要TSS_UUID_SRK的地方用变量SRK_UUID.
 只能在永久存储区域注册一次密钥，如果注册多次就会出错，这样就加载不了该密钥到TPM，只有unregister该密钥后重新注册一次，再加载它到TPM中才能成功加载。
+在创建存储密钥时，当调用Tspi_Context_CreateObject后，不要调用Tspi_SetAttribUint32为存储密钥设置填充类型，直接调用Tspi_Key_CreateKey创建密钥就是了

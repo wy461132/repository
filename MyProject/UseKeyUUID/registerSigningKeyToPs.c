@@ -46,12 +46,16 @@ int main()
 
     result=Tspi_Key_CreateKey(hSignKey,hSRKey,0);
     DBG("asking tpm to create the key",result);
-
+/*
     result=Tspi_Context_RegisterKey(hContext,hSignKey,TSS_PS_TYPE_SYSTEM,
             MY_UUID,TSS_PS_TYPE_SYSTEM,SRK_UUID);
     DBG("register the key for later retrieval",result);
 
     printf("register key blob for later retrieval\r\n");
+*/
+
+    result=Tspi_Context_UnregisterKey(hContext,TSS_PS_TYPE_SYSTEM,MY_UUID,&hSignKey);
+    DBG("unregister hSignKey",result);
 
     result=Tspi_Key_LoadKey(hSignKey,hSRKey);
     DBG("load key in TPM",result);

@@ -30,13 +30,20 @@ int main(void)
     result=Tspi_Policy_SetSecret(hSRKey_Policy,TSS_SECRET_MODE_PLAIN,8,"46113200");
 	DBG("Set secret of hSRKey_Policy",result);
 
-	initFlags=TSS_KEY_TYPE_STORAGE |TSS_KEY_SIZE_2048 | TSS_KEY_NO_AUTHORIZATION;
+	initFlags=TSS_KEY_TYPE_STORAGE |TSS_KEY_SIZE_2048 | TSS_KEY_AUTHORIZATION |
+        TSS_KEY_VOLATILE | TSS_KEY_NOT_MIGRATABLE;
 	result=Tspi_Context_CreateObject(hContext,TSS_OBJECT_TYPE_RSAKEY,initFlags,&hStorage_Key);
 	DBG("Create the Storage_Key object",result);
 
-	result=Tspi_SetAttribUint32(hStorage_Key,TSS_TSPATTRIB_KEY_INFO,
-			TSS_TSPATTRIB_KEYINFO_ENCSCHEME,TSS_ES_RSAESPKCSV15);
-	DBG("Set the key's padding type",result);
+    result=Tspi_Context_CreateObject(hContext,TSS_OBJECT_TYPE_POLICY,TSS_POLICY_USAGE,
+            &hStorage_Policy);
+    DBG("Create hStorage_Policy",result);
+
+    result=Tspi_Policy_SetSecret(hStorage_Policy,TSS_SECRET_MODE_PLAIN,3,"123");
+    DBG("Set secret of hStorage_Policy",result);
+
+    result=Tspi_Policy_AssignToObject(hStorage_Policy,hStorage_Key);
+    DBG("Assign hStorage_Policy to hStorage_Key",result);
 
 	result=Tspi_Key_CreateKey(hStorage_Key,hSRKey,0);
 	DBG("Asking tpm to create the key",result);
@@ -45,6 +52,10 @@ int main(void)
             STORAGE_UUID,TSS_PS_TYPE_SYSTEM,SRK_UUID);
 	DBG("Register hStorage_key to PS",result);
 */
+    result=Tspi_Context_UnregisterKey(hContext,TSS_PS_TYPE_SYSTEM,STORAGE_UUID,
+            &hStorage_Key);
+    DBG("Unregister hStorage_Key",result);
+
 	result=Tspi_Key_LoadKey(hStorage_Key,hSRKey);
 	DBG("Load hStorage_key in TPM",result);
 
